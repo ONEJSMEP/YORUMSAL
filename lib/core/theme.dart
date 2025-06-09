@@ -9,15 +9,15 @@ class ThemeProvider extends ChangeNotifier {
     _loadThemeFromPrefs();
   }
 
-  _loadThemeFromPrefs() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+  Future<void> _loadThemeFromPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
     _isDarkMode = prefs.getBool('isDarkMode') ?? false;
     notifyListeners();
   }
 
-  void toggleTheme() async {
+  Future<void> toggleTheme() async {
     _isDarkMode = !_isDarkMode;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('isDarkMode', _isDarkMode);
     notifyListeners();
   }
@@ -25,32 +25,30 @@ class ThemeProvider extends ChangeNotifier {
   ThemeData get lightTheme {
     return ThemeData(
       brightness: Brightness.light,
-      primarySwatch: Colors.teal, // Ana renk paleti
+      primarySwatch: Colors.teal,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF4A6572), // Ana renk
-        primary: const Color(0xFF4A6572),   // Birincil renk
-        secondary: const Color(0xFFFF9800), // İkincil renk (vurgu)
-        background: Colors.white,
+        seedColor: const Color(0xFF4A6572),
+        primary: const Color(0xFF4A6572),
+        secondary: const Color(0xFFFF9800),
         surface: Colors.white,
         onPrimary: Colors.white,
         onSecondary: Colors.black,
-        onBackground: Colors.black,
         onSurface: Colors.black,
         error: Colors.redAccent,
         onError: Colors.white,
       ),
       scaffoldBackgroundColor: Colors.grey[100],
-      appBarTheme: AppBarTheme(
-        backgroundColor: const Color(0xFF4A6572),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFF4A6572),
         foregroundColor: Colors.white,
         elevation: 0,
-        titleTextStyle: const TextStyle(
+        titleTextStyle: TextStyle(
           color: Colors.white,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: Colors.white,
         elevation: 2,
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
@@ -86,7 +84,6 @@ class ThemeProvider extends ChangeNotifier {
         backgroundColor: Colors.white,
       ),
       useMaterial3: true,
-      // fontFamily: 'Poppins', // Fontunuzu eklediyseniz
     );
   }
 
@@ -98,28 +95,26 @@ class ThemeProvider extends ChangeNotifier {
         seedColor: const Color(0xFF4A6572),
         primary: const Color(0xFF4A6572),
         secondary: const Color(0xFFFF9800),
-        background: const Color(0xFF121212),
         surface: const Color(0xFF1E1E1E),
         onPrimary: Colors.white,
         onSecondary: Colors.black,
-        onBackground: Colors.white,
         onSurface: Colors.white,
         error: Colors.red,
         onError: Colors.white,
         brightness: Brightness.dark,
       ),
       scaffoldBackgroundColor: const Color(0xFF121212),
-      appBarTheme: AppBarTheme(
-        backgroundColor: const Color(0xFF1E1E1E),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFF1E1E1E),
         foregroundColor: Colors.white,
         elevation: 0,
-        titleTextStyle: const TextStyle(
+        titleTextStyle: TextStyle(
           color: Colors.white,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: const Color(0xFF1E1E1E),
         elevation: 2,
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
@@ -156,7 +151,6 @@ class ThemeProvider extends ChangeNotifier {
         backgroundColor: const Color(0xFF1E1E1E),
       ),
       useMaterial3: true,
-      // fontFamily: 'Poppins',
     );
   }
 }
