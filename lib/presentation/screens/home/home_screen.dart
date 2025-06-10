@@ -23,9 +23,9 @@ class _HomeScreenState extends State<HomeScreen> {
   ];
 
   final List<String> _screenTitles = [
-    'Kiralık Evler',
+    '',
     'Harita',
-    'Profilim',
+    'Profil',
     'Ayarlar',
   ];
 

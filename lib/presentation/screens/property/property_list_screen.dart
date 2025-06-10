@@ -144,72 +144,56 @@ class PropertyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      clipBehavior: Clip.antiAlias,
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: InkWell(
-        onTap: onTap,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Resim
-            Container(
-              height: 180,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-              ),
-              child: (property.imageUrls?.isNotEmpty == true)
+            // Görsel
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              child: property.imageUrls?.isNotEmpty == true
                   ? Image.network(
                       property.imageUrls!.first,
+                      height: 180,
+                      width: double.infinity,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Center(
-                          child: Icon(
-                            Icons.home,
-                            size: 48,
-                            color: Colors.grey,
-                          ),
-                        );
-                      },
+                      errorBuilder: (_, __, ___) => _buildImagePlaceholder(),
                     )
-                  : const Center(
-                      child: Icon(
-                        Icons.home,
-                        size: 48,
-                        color: Colors.grey,
-                      ),
-                    ),
+                  : _buildImagePlaceholder(),
             ),
+
             // İçerik
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Başlık
                   Text(
                     property.title,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 8),
-                  // Adres
+                  const SizedBox(height: 6),
                   Row(
                     children: [
-                      const Icon(
-                        Icons.location_on,
-                        size: 16,
-                        color: Colors.grey,
-                      ),
+                      const Icon(Icons.location_on, size: 16, color: Colors.grey),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
@@ -225,14 +209,13 @@ class PropertyCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  // Fiyat ve özellikler
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         '${property.pricePerMonth} ₺/ay',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).primaryColor,
                         ),
@@ -240,8 +223,8 @@ class PropertyCard extends StatelessWidget {
                       Row(
                         children: [
                           _buildFeature(Icons.bed, '${property.bedrooms}'),
-                          const SizedBox(width: 16),
-                          _buildFeature(Icons.bathroom, '${property.bathrooms}'),
+                          const SizedBox(width: 12),
+                          _buildFeature(Icons.bathtub, '${property.bathrooms}'),
                         ],
                       ),
                     ],
@@ -255,23 +238,30 @@ class PropertyCard extends StatelessWidget {
     );
   }
 
+  Widget _buildImagePlaceholder() {
+    return Container(
+      height: 180,
+      width: double.infinity,
+      color: Colors.grey[200],
+      child: const Icon(
+        Icons.home,
+        size: 48,
+        color: Colors.grey,
+      ),
+    );
+  }
+
   Widget _buildFeature(IconData icon, String text) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: Colors.grey,
-        ),
+        Icon(icon, size: 16, color: Colors.grey),
         const SizedBox(width: 4),
         Text(
           text,
-          style: const TextStyle(
-            color: Colors.grey,
-            fontSize: 14,
-          ),
+          style: const TextStyle(fontSize: 14, color: Colors.grey),
         ),
       ],
     );
   }
 }
+

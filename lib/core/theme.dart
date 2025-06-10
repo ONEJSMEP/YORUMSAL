@@ -1,48 +1,131 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-// Yüksek kontrastlı canlı tema tanımı (Tema 4)
-final ThemeData highContrastTheme = ThemeData(
-  brightness: Brightness.dark,
+// Renk sabitleri
+class AppColors {
+  static const primary = Color(0xFF00695C);
+  static const secondary = Color(0xFFFFB300);
+  static const backgroundLight = Color(0xFFF8FAFC);
+  static const surfaceLight = Colors.white;
+  static const backgroundDark = Color(0xFF121212);
+  static const surfaceDark = Color(0xFF1E1E1E);
+}
+
+const String appFontFamily = 'Poppins';
+
+// LIGHT
+final ThemeData modernLightTheme = ThemeData(
   useMaterial3: true,
-  colorScheme: ColorScheme.dark(
-    primary: Colors.tealAccent.shade200,
-    secondary: Colors.amberAccent.shade700,
-    surface: Colors.grey.shade900,
-    onPrimary: Colors.black,
+  fontFamily: appFontFamily,
+  brightness: Brightness.light,
+  colorScheme: ColorScheme.light(
+    primary: AppColors.primary,
+    secondary: AppColors.secondary,
+    surface: AppColors.surfaceLight,
+    onPrimary: Colors.white,
     onSecondary: Colors.black,
-    onSurface: Colors.white,
+    onSurface: Colors.black87,
     error: Colors.redAccent,
     onError: Colors.white,
   ),
-  scaffoldBackgroundColor: Colors.black,
-  appBarTheme: AppBarTheme(
-    backgroundColor: Colors.grey.shade900,
-    foregroundColor: Colors.amberAccent.shade700,
-    elevation: 2,
-    titleTextStyle: TextStyle(
-      color: Colors.amberAccent.shade700,
-      fontSize: 22,
-      fontWeight: FontWeight.bold,
-    ),
-    iconTheme: IconThemeData(color: Colors.amberAccent.shade700),
+  scaffoldBackgroundColor: AppColors.backgroundLight,
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Colors.white,
+    foregroundColor: Colors.black87,
+    elevation: 0.5,
     centerTitle: true,
   ),
-  cardTheme: const CardThemeData(
-    color: Color(0xFF2A2A2A),
-    elevation: 6,
-    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-    shape: RoundedRectangleBorder(
+  cardTheme: CardThemeData(
+    color: AppColors.surfaceLight,
+    elevation: 3,
+    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+    shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(16)),
     ),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.tealAccent.shade200,
+      backgroundColor: AppColors.secondary,
+      foregroundColor: Colors.white,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+      ),
+      textStyle: const TextStyle(
+        fontWeight: FontWeight.w600,
+        fontSize: 15,
+      ),
+    ),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: Colors.grey.shade100,
+    labelStyle: const TextStyle(color: Colors.black54),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.grey.shade300),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: AppColors.primary, width: 2),
+    ),
+  ),
+  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    backgroundColor: AppColors.surfaceLight,
+    selectedItemColor: AppColors.primary,
+    unselectedItemColor: Colors.grey,
+    type: BottomNavigationBarType.fixed,
+    showUnselectedLabels: true,
+  ),
+  textTheme: const TextTheme(
+    titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    bodyLarge: TextStyle(fontSize: 16, color: Colors.black87),
+    bodyMedium: TextStyle(fontSize: 14, color: Colors.black54),
+    labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+  ),
+);
+
+// DARK
+final ThemeData modernDarkTheme = ThemeData(
+  useMaterial3: true,
+  fontFamily: appFontFamily,
+  brightness: Brightness.dark,
+  colorScheme: ColorScheme.dark(
+    primary: AppColors.primary,
+    secondary: AppColors.secondary,
+    surface: AppColors.surfaceDark,
+    onPrimary: Colors.white,
+    onSecondary: Colors.black,
+    onSurface: Colors.white70,
+    error: Colors.redAccent,
+    onError: Colors.white,
+  ),
+  scaffoldBackgroundColor: AppColors.backgroundDark,
+  appBarTheme: const AppBarTheme(
+    backgroundColor: AppColors.surfaceDark,
+    foregroundColor: Colors.white,
+    elevation: 0.5,
+    centerTitle: true,
+  ),
+  cardTheme: CardThemeData(
+    color: AppColors.surfaceDark,
+    elevation: 2,
+    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(16)),
+    ),
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: AppColors.secondary,
       foregroundColor: Colors.black,
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-      shape: const StadiumBorder(),
-      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+      ),
+      textStyle: const TextStyle(
+        fontWeight: FontWeight.w600,
+        fontSize: 15,
+      ),
     ),
   ),
   inputDecorationTheme: InputDecorationTheme(
@@ -55,44 +138,20 @@ final ThemeData highContrastTheme = ThemeData(
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: Colors.tealAccent.shade200, width: 2),
+      borderSide: const BorderSide(color: AppColors.primary, width: 2),
     ),
   ),
-  bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    backgroundColor: Colors.grey.shade900,
-    selectedItemColor: Colors.amberAccent.shade700,
-    unselectedItemColor: Colors.white60,
+  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+    backgroundColor: AppColors.surfaceDark,
+    selectedItemColor: AppColors.secondary,
+    unselectedItemColor: Colors.grey,
+    type: BottomNavigationBarType.fixed,
     showUnselectedLabels: true,
-    elevation: 8,
   ),
-  textTheme: TextTheme(
-    titleLarge: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-    bodyLarge: const TextStyle(fontSize: 16, color: Colors.white),
-    bodyMedium: const TextStyle(fontSize: 14, color: Colors.white70),
+  textTheme: const TextTheme(
+    titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    bodyLarge: TextStyle(fontSize: 16, color: Colors.white),
+    bodyMedium: TextStyle(fontSize: 14, color: Colors.white70),
+    labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
   ),
 );
-
-class CoreThemeProvider extends ChangeNotifier {
-  static final CoreThemeProvider instance = CoreThemeProvider._();
-  CoreThemeProvider._() {
-    _loadThemeFromPrefs();
-  }
-
-  bool _isDarkMode = false;
-  bool get isDarkMode => _isDarkMode;
-
-  Future<void> _loadThemeFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    _isDarkMode = prefs.getBool('isDarkMode') ?? false;
-    notifyListeners();
-  }
-
-  Future<void> toggleTheme() async {
-    _isDarkMode = !_isDarkMode;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isDarkMode', _isDarkMode);
-    notifyListeners();
-  }
-
-  ThemeData get theme => highContrastTheme;
-}

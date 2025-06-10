@@ -243,31 +243,41 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
   }
 
   Widget _buildFeatureCard({
-    required IconData icon,
-    required String label,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: Theme.of(context).primaryColor),
-          const SizedBox(height: 8),
-          Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 12,
-            ),
-            textAlign: TextAlign.center,
+  required IconData icon,
+  required String label,
+}) {
+  return Container(
+    width: 100,
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.grey.withOpacity(0.08),
+          blurRadius: 10,
+          offset: Offset(0, 4),
+        ),
+      ],
+    ),
+    child: Column(
+      children: [
+        Icon(icon, color: Colors.blue.shade600, size: 24),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+            fontSize: 13,
+            color: Colors.black87,
           ),
-        ],
-      ),
-    );
-  }
+          textAlign: TextAlign.center,
+        ),
+      ],
+    ),
+  );
+}
+
 
   void _showContactDialog() {
     showDialog(

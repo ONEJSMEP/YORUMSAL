@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
-import '../screens/home/home_screen.dart'; // <-- YOLU DÜZELT
+import '../screens/home/home_screen.dart';
 
 class AuthForm extends StatefulWidget {
   final String userRole;
@@ -39,11 +39,15 @@ class _AuthFormState extends State<AuthForm> {
 
       if (success && mounted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => HomeScreen()),
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
         );
       } else if (!success && authProvider.errorMessage != null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(authProvider.errorMessage!)),
+          SnackBar(
+            content: Text(authProvider.errorMessage!),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       }
     }
@@ -51,6 +55,8 @@ class _AuthFormState extends State<AuthForm> {
 
   @override
   Widget build(BuildContext context) {
+    final secondaryColor = Theme.of(context).colorScheme.secondary;
+
     return Form(
       key: _formKey,
       child: Column(
@@ -68,57 +74,75 @@ class _AuthFormState extends State<AuthForm> {
                 }
                 return null;
               },
-              decoration: const InputDecoration(labelText: 'Ad Soyad'),
+              decoration: const InputDecoration(
+                labelText: 'Ad Soyad',
+                prefixIcon: Icon(Icons.person),
+              ),
               onSaved: (value) {
                 _fullName = value ?? '';
               },
             ),
+          const SizedBox(height: 16),
           TextFormField(
             key: const ValueKey('email'),
             autocorrect: false,
             textCapitalization: TextCapitalization.none,
             enableSuggestions: false,
+            keyboardType: TextInputType.emailAddress,
             validator: (value) {
               if (value == null || value.isEmpty || !value.contains('@')) {
-                return 'Lütfen geçerli bir e-posta adresi girin.';
+                return 'Geçerli bir e-posta adresi girin.';
               }
               return null;
             },
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(labelText: 'E-posta Adresi'),
+            decoration: const InputDecoration(
+              labelText: 'E-posta Adresi',
+              prefixIcon: Icon(Icons.email),
+            ),
             onSaved: (value) {
               _email = value ?? '';
             },
           ),
+          const SizedBox(height: 16),
           TextFormField(
             key: const ValueKey('password'),
+            obscureText: true,
             validator: (value) {
               if (value == null || value.isEmpty || value.length < 7) {
-                return 'Şifre en az 7 karakter olmalıdır.';
+                return 'Şifre en az 7 karakter olmalı.';
               }
               return null;
             },
-            decoration: const InputDecoration(labelText: 'Şifre'),
-            obscureText: true,
+            decoration: const InputDecoration(
+              labelText: 'Şifre',
+              prefixIcon: Icon(Icons.lock),
+            ),
             onSaved: (value) {
               _password = value ?? '';
             },
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _trySubmit,
-            child: Text(_isLogin ? 'Giriş Yap' : 'Kayıt Ol'),
-          ),
-          TextButton(
             child: Text(
-              _isLogin ? 'Yeni hesap oluştur' : 'Zaten bir hesabım var',
-              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+              _isLogin ? 'Giriş Yap' : 'Kayıt Ol',
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
+          ),
+          const SizedBox(height: 8),
+          TextButton(
             onPressed: () {
               setState(() {
                 _isLogin = !_isLogin;
               });
             },
+            child: Text(
+              _isLogin ? 'Yeni hesap oluştur' : 'Zaten bir hesabım var',
+              style: TextStyle(
+                color: secondaryColor,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ],
       ),

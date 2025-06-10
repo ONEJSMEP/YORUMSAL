@@ -4,86 +4,119 @@ import '../../providers/theme_provider.dart';
 import '../../providers/auth_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+  const SettingsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: true);
+    final themeProvider = Provider.of<ThemeProvider>(context);
     final authProvider = Provider.of<AuthProvider>(context);
 
+    const titleStyle = TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
+
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: AppBar(
+        title: const Text('Ayarlar'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black87,
+        elevation: 0.5,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
-        children: <Widget>[
-          ListTile(
-            leading: Icon(themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode),
-            title: const Text('Karanlık Mod'),
+        children: [
+          _buildSettingCard(
+            context: context,
+            icon: themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+            title: 'Karanlık Mod',
             trailing: Switch(
               value: themeProvider.isDarkMode,
-              onChanged: (value) {
-                themeProvider.toggleTheme();
-              },
-              activeColor: Theme.of(context).colorScheme.secondary,
+              onChanged: (_) => themeProvider.toggleTheme(),
+              activeColor: Theme.of(context).colorScheme.primary,
             ),
           ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.language),
-            title: const Text('Dil'),
-            subtitle: const Text('Türkçe (TR)'), // Dil seçimi eklenebilir
+          _buildSettingCard(
+            context: context,
+            icon: Icons.language,
+            title: 'Uygulama Dili',
             onTap: () {
-              // Dil seçimi ekranı veya dialog
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Dil seçimi özelliği yakında eklenecektir.')),
+                const SnackBar(content: Text('Dil seçimi yakında eklenecektir.')),
               );
             },
           ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.person_outline),
-            title: const Text('Profil Ayarları'),
+          _buildSettingCard(
+            context: context,
+            icon: Icons.notifications_outlined,
+            title: 'Bildirim Ayarları',
             onTap: () {
-              // Profil düzenleme ekranına git
-               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Profil ayarları özelliği yakında eklenecektir.')),
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Bildirim ayarları yakında eklenecektir.')),
               );
             },
           ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.notifications_outlined),
-            title: const Text('Bildirim Ayarları'),
-            onTap: () {
-              // Bildirim ayarları ekranına git
-               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Bildirim ayarları özelliği yakında eklenecektir.')),
-              );
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.info_outline),
-            title: const Text('Hakkında'),
+          _buildSettingCard(
+            context: context,
+            icon: Icons.info_outline,
+            title: 'Hakkında',
             onTap: () {
               showAboutDialog(
                 context: context,
-                applicationName: 'Kiralık Ev Yorumları',
+                applicationName: 'YORUMSAL',
                 applicationVersion: '1.0.0',
-                applicationLegalese: '© 2023 Tüm Hakları Saklıdır',
+                applicationLegalese: '© 2025 Tüm Hakları Saklıdır',
               );
             },
           ),
-          const Divider(),
           if (authProvider.currentUser != null)
-            ListTile(
-              leading: Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
-              title: Text('Çıkış Yap', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            _buildSettingCard(
+              context: context,
+              icon: Icons.logout,
+              title: 'Çıkış Yap',
+              iconColor: Theme.of(context).colorScheme.error,
+              textColor: Theme.of(context).colorScheme.error,
               onTap: () async {
                 await authProvider.signOut();
-                // Giriş ekranına yönlendirme MyApp widget'ı tarafından yapılacak
               },
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildSettingCard({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    Color? iconColor,
+    Color? textColor,
+    Widget? trailing,
+    VoidCallback? onTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: iconColor ?? Colors.blue.shade600),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: textColor ?? Colors.black87,
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+        onTap: onTap,
       ),
     );
   }

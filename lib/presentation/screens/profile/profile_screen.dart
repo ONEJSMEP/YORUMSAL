@@ -11,91 +11,97 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            const SizedBox(height: 20),
-            // Profil fotoğrafı
-            const CircleAvatar(
-              radius: 50,
-              backgroundColor: Colors.grey,
-              child: Icon(
-                Icons.person,
-                size: 50,
-                color: Colors.white,
+            const SizedBox(height: 40),
+
+            // PROFİL FOTO
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [Colors.blue.shade400, Colors.indigo.shade600],
+                ),
+              ),
+              child: const CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.white,
+                child: Icon(Icons.person, size: 48, color: Colors.grey),
               ),
             ),
+
             const SizedBox(height: 16),
-            // Kullanıcı adı
+
+            // KULLANICI ADI
             const Text(
               'Kullanıcı Adı',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
             ),
-            const SizedBox(height: 4),
-            // BADGE (Dinamik yapmak için Text yerine değişken kullanabilirsin)
+
+            const SizedBox(height: 6),
+
+            // ROL / BADGE
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.orange.shade100,
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.orange.shade50,
+                borderRadius: BorderRadius.circular(20),
               ),
               child: const Text(
-                'VIP', // Burayı dinamik yapabilirsin (örn: Admin, Standart, Yeni Üye ...)
+                'VIP',
                 style: TextStyle(
                   color: Colors.orange,
-                  fontWeight: FontWeight.bold,
                   fontSize: 12,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
+
             const SizedBox(height: 8),
+
+            // E-POSTA
             const Text(
               'user@example.com',
               style: TextStyle(
                 color: Colors.grey,
               ),
             ),
+
             const SizedBox(height: 32),
-            // Profil seçenekleri
+
+            // PROFİL SEÇENEKLERİ
             _buildProfileOption(
               icon: Icons.edit,
               title: 'Profili Düzenle',
-              onTap: () {
-                // Profil düzenleme ekranına git
-              },
+              onTap: () {},
             ),
             _buildProfileOption(
               icon: Icons.comment_outlined,
-              title: 'Yorumlarım', // ← Favori Evlerim yerine
-              onTap: () {
-                // Burada UserCommentsScreen'e yönlendirebilirsin
-                // Navigator.push(context, MaterialPageRoute(builder: (_) => UserCommentsScreen()));
-              },
+              title: 'Yorumlarım',
+              onTap: () {},
             ),
             _buildProfileOption(
               icon: Icons.history,
               title: 'Görüntüleme Geçmişi',
-              onTap: () {
-                // Geçmiş ekranına git
-              },
+              onTap: () {},
             ),
             _buildProfileOption(
-              icon: Icons.help,
+              icon: Icons.help_outline,
               title: 'Yardım',
-              onTap: () {
-                // Yardım ekranına git
-              },
+              onTap: () {},
             ),
             _buildProfileOption(
               icon: Icons.logout,
               title: 'Çıkış Yap',
-              onTap: () {
-                // Çıkış yap
-              },
+              onTap: () {},
             ),
           ],
         ),
@@ -108,12 +114,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String title,
     required VoidCallback onTap,
   }) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: ListTile(
-        leading: Icon(icon),
-        title: Text(title),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        leading: Icon(icon, color: Colors.blue.shade600),
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w500),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
         onTap: onTap,
       ),
     );

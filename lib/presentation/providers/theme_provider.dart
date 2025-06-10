@@ -5,9 +5,9 @@ class ThemeProvider extends ChangeNotifier {
   bool _isDarkMode = false;
   bool get isDarkMode => _isDarkMode;
 
-  /// Görünür tema: yüksek kontrastlı tema
-  ThemeData get lightTheme => highContrastTheme;
-  ThemeData get darkTheme => highContrastTheme;
+  /// Light ve Dark modlar için modern temalar
+  ThemeData get lightTheme => modernLightTheme;
+  ThemeData get darkTheme => modernDarkTheme;
 
   void toggleTheme() {
     _isDarkMode = !_isDarkMode;

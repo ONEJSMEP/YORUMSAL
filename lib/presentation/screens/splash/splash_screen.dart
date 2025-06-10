@@ -9,26 +9,22 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _animation;
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
+    _animationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
-    );
-
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
-    _controller.forward();
+    )..repeat(reverse: true);
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -44,39 +40,87 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: FadeTransition(
-        opacity: _animation,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue.shade500, Colors.indigo.shade600],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // LOGO: Kendi logonla değiştir (örnek: 'assets/logo.png')
-              Image.asset(
-                'assets/images/app_logo.png',
-                width: 120,
-                height: 120,
-              ),
-              const SizedBox(height: 32),
-              const Text(
-                'Emlak Uygulaması',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 48),
-              ElevatedButton(
-                onPressed: () => _navigateToAuth('owner'),
-                child: const Text('Ev Sahibi Olarak Devam Et'),
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => _navigateToAuth('reviewer'),
-                child: const Text('Yorumcu Olarak Devam Et'),
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedBuilder(
+                  animation: _animationController,
+                  builder: (context, child) {
+                    return Transform.translate(
+                      offset: Offset(0, -10 * _animationController.value),
+                      child: Icon(
+                        Icons.home,
+                        size: 96,
+                        color: Colors.white,
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'EvYorum',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Kiralık evler için yorum platformu',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.blue.shade100,
+                  ),
+                ),
+                const SizedBox(height: 48),
+                ElevatedButton(
+                  onPressed: () => _navigateToAuth('owner'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.blue.shade700,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: const Text(
+                    'Ev Sahibi Olarak Devam Et',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () => _navigateToAuth('reviewer'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.indigo.shade700,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: const Text(
+                    'Yorumcu Olarak Devam Et',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
-
