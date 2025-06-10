@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'app.dart'; // app.dart dosyasını oluşturacağız
-import 'core/theme.dart';
 import 'services/supabase_service.dart';
 import 'presentation/providers/auth_provider.dart'; // auth_provider.dart dosyasını oluşturacağız
+import 'presentation/providers/theme_provider.dart'; // Updated import for ThemeProvider
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme.dart';
+import '../../providers/theme_provider.dart';
 import '../../providers/auth_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -8,7 +8,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context, listen: true); // listen: true önemli
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: true);
     final authProvider = Provider.of<AuthProvider>(context);
 
     return Scaffold(

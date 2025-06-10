@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../screens/home/home_screen.dart'; // <-- YOLU DÜZELT
 
 class AuthForm extends StatefulWidget {
-  final String userRole; // ← EKLENDİ
-
-  const AuthForm({super.key, required this.userRole}); // ← GÜNCELLENDİ
+  final String userRole;
+  const AuthForm({Key? key, required this.userRole}) : super(key: key);
 
   @override
   State<AuthForm> createState() => _AuthFormState();
@@ -16,11 +16,11 @@ class _AuthFormState extends State<AuthForm> {
   bool _isLogin = true;
   String _email = '';
   String _password = '';
-  String _fullName = ''; // Sadece kayıt olurken kullanılacak
+  String _fullName = '';
 
   void _trySubmit() async {
     final isValid = _formKey.currentState?.validate() ?? false;
-    FocusScope.of(context).unfocus(); // Klavyeyi kapat
+    FocusScope.of(context).unfocus();
 
     if (isValid) {
       _formKey.currentState?.save();
@@ -33,12 +33,18 @@ class _AuthFormState extends State<AuthForm> {
           _email,
           _password,
           fullName: _fullName,
-          userRole: widget.userRole, // ← BURASI ÖNEMLİ
+          userRole: widget.userRole,
         );
       }
 
-      if (!success && authProvider.errorMessage != null && mounted) {
-        // İsteğe bağlı SnackBar gösterimi yapılabilir.
+      if (success && mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => HomeScreen()),
+        );
+      } else if (!success && authProvider.errorMessage != null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(authProvider.errorMessage!)),
+        );
       }
     }
   }
@@ -113,7 +119,7 @@ class _AuthFormState extends State<AuthForm> {
                 _isLogin = !_isLogin;
               });
             },
-          )
+          ),
         ],
       ),
     );

@@ -35,6 +35,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(height: 4),
+            // BADGE (Dinamik yapmak için Text yerine değişken kullanabilirsin)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.orange.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                'VIP', // Burayı dinamik yapabilirsin (örn: Admin, Standart, Yeni Üye ...)
+                style: TextStyle(
+                  color: Colors.orange,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+            ),
             const SizedBox(height: 8),
             const Text(
               'user@example.com',
@@ -52,10 +69,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               },
             ),
             _buildProfileOption(
-              icon: Icons.favorite,
-              title: 'Favori Evlerim',
+              icon: Icons.comment_outlined,
+              title: 'Yorumlarım', // ← Favori Evlerim yerine
               onTap: () {
-                // Favori evler ekranına git
+                // Burada UserCommentsScreen'e yönlendirebilirsin
+                // Navigator.push(context, MaterialPageRoute(builder: (_) => UserCommentsScreen()));
               },
             ),
             _buildProfileOption(

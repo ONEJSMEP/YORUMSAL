@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'core/constants.dart';
-import 'core/theme.dart';
 import 'presentation/screens/splash/splash_screen.dart'; // Sadece bu kaldı
+import 'presentation/providers/theme_provider.dart'; // Updated import for ThemeProvider
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

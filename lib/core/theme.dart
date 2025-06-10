@@ -1,13 +1,85 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ThemeProvider extends ChangeNotifier {
-  bool _isDarkMode = false;
-  bool get isDarkMode => _isDarkMode;
+// Yüksek kontrastlı canlı tema tanımı (Tema 4)
+final ThemeData highContrastTheme = ThemeData(
+  brightness: Brightness.dark,
+  useMaterial3: true,
+  colorScheme: ColorScheme.dark(
+    primary: Colors.tealAccent.shade200,
+    secondary: Colors.amberAccent.shade700,
+    surface: Colors.grey.shade900,
+    onPrimary: Colors.black,
+    onSecondary: Colors.black,
+    onSurface: Colors.white,
+    error: Colors.redAccent,
+    onError: Colors.white,
+  ),
+  scaffoldBackgroundColor: Colors.black,
+  appBarTheme: AppBarTheme(
+    backgroundColor: Colors.grey.shade900,
+    foregroundColor: Colors.amberAccent.shade700,
+    elevation: 2,
+    titleTextStyle: TextStyle(
+      color: Colors.amberAccent.shade700,
+      fontSize: 22,
+      fontWeight: FontWeight.bold,
+    ),
+    iconTheme: IconThemeData(color: Colors.amberAccent.shade700),
+    centerTitle: true,
+  ),
+  cardTheme: const CardThemeData(
+    color: Color(0xFF2A2A2A),
+    elevation: 6,
+    margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(16)),
+    ),
+  ),
+  elevatedButtonTheme: ElevatedButtonThemeData(
+    style: ElevatedButton.styleFrom(
+      backgroundColor: Colors.tealAccent.shade200,
+      foregroundColor: Colors.black,
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+      shape: const StadiumBorder(),
+      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    ),
+  ),
+  inputDecorationTheme: InputDecorationTheme(
+    filled: true,
+    fillColor: Colors.grey.shade800,
+    labelStyle: const TextStyle(color: Colors.white70),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.grey.shade700),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.tealAccent.shade200, width: 2),
+    ),
+  ),
+  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    backgroundColor: Colors.grey.shade900,
+    selectedItemColor: Colors.amberAccent.shade700,
+    unselectedItemColor: Colors.white60,
+    showUnselectedLabels: true,
+    elevation: 8,
+  ),
+  textTheme: TextTheme(
+    titleLarge: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    bodyLarge: const TextStyle(fontSize: 16, color: Colors.white),
+    bodyMedium: const TextStyle(fontSize: 14, color: Colors.white70),
+  ),
+);
 
-  ThemeProvider() {
+class CoreThemeProvider extends ChangeNotifier {
+  static final CoreThemeProvider instance = CoreThemeProvider._();
+  CoreThemeProvider._() {
     _loadThemeFromPrefs();
   }
+
+  bool _isDarkMode = false;
+  bool get isDarkMode => _isDarkMode;
 
   Future<void> _loadThemeFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
@@ -22,135 +94,5 @@ class ThemeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  ThemeData get lightTheme {
-    return ThemeData(
-      brightness: Brightness.light,
-      primarySwatch: Colors.teal,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF4A6572),
-        primary: const Color(0xFF4A6572),
-        secondary: const Color(0xFFFF9800),
-        surface: Colors.white,
-        onPrimary: Colors.white,
-        onSecondary: Colors.black,
-        onSurface: Colors.black,
-        error: Colors.redAccent,
-        onError: Colors.white,
-      ),
-      scaffoldBackgroundColor: Colors.grey[100],
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF4A6572),
-        foregroundColor: Colors.white,
-        elevation: 0,
-        titleTextStyle: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      cardTheme: CardThemeData(
-        color: Colors.white,
-        elevation: 2,
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFF9800),
-          foregroundColor: Colors.black,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey.shade400),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFF4A6572), width: 2),
-        ),
-        labelStyle: TextStyle(color: Colors.grey.shade700),
-      ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        selectedItemColor: const Color(0xFFFF9800),
-        unselectedItemColor: Colors.grey.shade600,
-        backgroundColor: Colors.white,
-      ),
-      useMaterial3: true,
-    );
-  }
-
-  ThemeData get darkTheme {
-    return ThemeData(
-      brightness: Brightness.dark,
-      primarySwatch: Colors.teal,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: const Color(0xFF4A6572),
-        primary: const Color(0xFF4A6572),
-        secondary: const Color(0xFFFF9800),
-        surface: const Color(0xFF1E1E1E),
-        onPrimary: Colors.white,
-        onSecondary: Colors.black,
-        onSurface: Colors.white,
-        error: Colors.red,
-        onError: Colors.white,
-        brightness: Brightness.dark,
-      ),
-      scaffoldBackgroundColor: const Color(0xFF121212),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Color(0xFF1E1E1E),
-        foregroundColor: Colors.white,
-        elevation: 0,
-        titleTextStyle: TextStyle(
-          color: Colors.white,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      cardTheme: CardThemeData(
-        color: const Color(0xFF1E1E1E),
-        elevation: 2,
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFFF9800),
-          foregroundColor: Colors.black,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey.shade700),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFFFF9800), width: 2),
-        ),
-        labelStyle: TextStyle(color: Colors.grey.shade400),
-        hintStyle: TextStyle(color: Colors.grey.shade500),
-      ),
-      bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        selectedItemColor: const Color(0xFFFF9800),
-        unselectedItemColor: Colors.grey.shade400,
-        backgroundColor: const Color(0xFF1E1E1E),
-      ),
-      useMaterial3: true,
-    );
-  }
+  ThemeData get theme => highContrastTheme;
 }
