@@ -44,7 +44,7 @@ final ThemeData modernLightTheme = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: AppColors.secondary,
+      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       foregroundColor: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
       shape: const RoundedRectangleBorder(
@@ -116,7 +116,7 @@ final ThemeData modernDarkTheme = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: AppColors.secondary,
+      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       foregroundColor: Colors.black,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
       shape: const RoundedRectangleBorder(
@@ -143,7 +143,7 @@ final ThemeData modernDarkTheme = ThemeData(
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     backgroundColor: AppColors.surfaceDark,
-    selectedItemColor: AppColors.secondary,
+    selectedItemColor: Color.fromARGB(255, 0, 0, 0),
     unselectedItemColor: Colors.grey,
     type: BottomNavigationBarType.fixed,
     showUnselectedLabels: true,

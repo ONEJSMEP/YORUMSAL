@@ -11,16 +11,10 @@ class SettingsScreen extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final authProvider = Provider.of<AuthProvider>(context);
 
-    const titleStyle = TextStyle(fontSize: 16, fontWeight: FontWeight.w500);
-
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        title: const Text('Ayarlar'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        elevation: 0.5,
-      ),
+      backgroundColor: const Color(0xFF1E88E5),
+      
+   
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
@@ -106,7 +100,7 @@ class SettingsScreen extends StatelessWidget {
         ],
       ),
       child: ListTile(
-        leading: Icon(icon, color: iconColor ?? Colors.blue.shade600),
+        leading: Icon(icon, color: iconColor ?? const Color(0xFF1E88E5)),
         title: Text(
           title,
           style: TextStyle(

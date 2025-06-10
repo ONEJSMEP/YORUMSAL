@@ -11,7 +11,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: const Color(0xFF1E88E5),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -58,7 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: const Text(
                 'VIP',
                 style: TextStyle(
-                  color: Colors.orange,
+                  color: Color.fromARGB(255, 0, 0, 0),
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -71,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const Text(
               'user@example.com',
               style: TextStyle(
-                color: Colors.grey,
+                color: Color.fromARGB(255, 0, 0, 0),
               ),
             ),
 
