@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../property/property_list_screen.dart';
-import '../map/map_screen.dart'; // map_screen.dart oluşturulacak
-import '../profile/profile_screen.dart'; // profile_screen.dart oluşturulacak
-import '../settings/settings_screen.dart'; // settings_screen.dart oluşturulacak
+import '../map/map_screen.dart';
+import '../profile/profile_screen.dart';
+import '../settings/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home';
@@ -16,8 +16,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const PropertyListScreen(), // property_list_screen.dart oluşturulacak
-    const MapScreen(),
+    const PropertyListScreen(),
+    MapScreen(),
     const ProfileScreen(),
     const SettingsScreen(),
   ];
@@ -40,12 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_screenTitles[_selectedIndex]),
-        // İsteğe bağlı: Arama veya filtreleme butonu eklenebilir
-        // actions: _selectedIndex == 0 ? [
-        //   IconButton(icon: Icon(Icons.search), onPressed: () { /* Arama ekranına git */ }),
-        // ] : null,
       ),
-      body: IndexedStack( // Ekranlar arasında geçiş yaparken state'i korur
+      body: IndexedStack(
         index: _selectedIndex,
         children: _screens,
       ),
@@ -74,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed, // 4+ item için fixed iyidir
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }

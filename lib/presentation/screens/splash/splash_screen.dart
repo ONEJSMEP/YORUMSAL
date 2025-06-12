@@ -69,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 ),
                 const SizedBox(height: 24),
                 const Text(
-                  'EvYorum',
+                  'YORUMSAL',
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -78,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Kiralık evler için yorum platformu',
+                  'Yorumlarla Kirala, Güvenle Yaşa!',
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.blue.shade100,
