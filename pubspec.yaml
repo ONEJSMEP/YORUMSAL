@@ -19,6 +19,7 @@ dependencies:
   latlong2: ^0.8.1
   intl: ^0.18.0
   google_fonts: ^4.0.4  # <-- YENİ YAZI STİLLERİ İÇİN PACKAGE -->
+  image_picker: ^1.1.2
 
 
 dev_dependencies:

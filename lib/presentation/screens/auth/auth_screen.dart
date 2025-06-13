@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
-import '../../widgets/auth_form.dart';
+
 
 class AuthScreen extends StatelessWidget {
   static const routeName = '/auth';
@@ -12,7 +12,7 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = Provider.of<AuthProvider>(context);
+    Provider.of<AuthProvider>(context);
 
     return Scaffold(
       backgroundColor: const Color(0xFF13161F),
@@ -120,10 +120,10 @@ class AuthScreen extends StatelessWidget {
                 TextSpan(
                   text: "By creating an account or signing you agree to our ",
                   style: const TextStyle(color: Colors.white38, fontSize: 12),
-                  children: [
+                  children: const [
                     TextSpan(
                       text: "Terms and Conditions",
-                      style: const TextStyle(
+                      style: TextStyle(
                         decoration: TextDecoration.underline,
                         color: Colors.white70,
                         fontWeight: FontWeight.bold,
