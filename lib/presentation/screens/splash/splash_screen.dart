@@ -1,5 +1,3 @@
-// lib/presentation/screens/splash/splash_screen.dart
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
@@ -19,17 +17,31 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   final PageController _pageController = PageController();
   String? _selectedRole;
 
-  // Ortak form alanları
+  // Form alanları
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _tcController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
-  List<XFile> _selectedImages = [];
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _verifyPhoneController = TextEditingController();
+  final TextEditingController _verifyEmailController = TextEditingController();
+  final TextEditingController _signInEmailController = TextEditingController();
+  final TextEditingController _signInPasswordController = TextEditingController();
+  final TextEditingController _onlyPasswordController = TextEditingController();
 
-  // Ülke kodları
+  List<XFile> _selectedImages = [];
   final List<String> _countryCodes = ['+90', '+1', '+44', '+49', '+33'];
   String _selectedCountryCode = '+90';
+
+  // Doğrulama ve giriş
+  bool _isPhoneVerified = false;
+  bool _isEmailVerified = false;
+  bool _isRememberMe = false;
+  bool _isLoggedIn = false;
+  String? _rememberedEmail;
+  String? _rememberedPhoto;
+  bool _showOnlyPasswordScreen = false;
 
   @override
   void initState() {
@@ -49,12 +61,42 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     _tcController.dispose();
     _emailController.dispose();
     _addressController.dispose();
+    _passwordController.dispose();
+    _verifyPhoneController.dispose();
+    _verifyEmailController.dispose();
+    _signInEmailController.dispose();
+    _signInPasswordController.dispose();
+    _onlyPasswordController.dispose();
     super.dispose();
   }
 
   void _goToRolePage() {
+  setState(() {
+    _selectedRole = 'owner'; // Otomatik olarak ev sahibi seçili gelsin
+    _showOnlyPasswordScreen = false;
+  });
+  _pageController.animateToPage(
+    1,
+    duration: const Duration(milliseconds: 400),
+    curve: Curves.easeInOut,
+  );
+}
+
+
+  void _goToSignInPage() {
+    setState(() {
+      _showOnlyPasswordScreen = false;
+    });
     _pageController.animateToPage(
-      1,
+      2,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _goToSplashPage() {
+    _pageController.animateToPage(
+      0,
       duration: const Duration(milliseconds: 400),
       curve: Curves.easeInOut,
     );
@@ -63,14 +105,18 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void _selectRole(String role) {
     setState(() {
       _selectedRole = role;
-      // Formları temizle
       _nameController.clear();
       _phoneController.clear();
       _tcController.clear();
       _emailController.clear();
       _addressController.clear();
+      _passwordController.clear();
+      _verifyPhoneController.clear();
+      _verifyEmailController.clear();
       _selectedImages = [];
       _selectedCountryCode = '+90';
+      _isPhoneVerified = false;
+      _isEmailVerified = false;
     });
   }
 
@@ -79,10 +125,14 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     final List<XFile>? images = await picker.pickMultiImage();
     if (images != null) {
       setState(() {
-        _selectedImages = images.take(10).toList(); // Maksimum 10 fotoğraf
+        _selectedImages = images.take(10).toList();
       });
     }
   }
+
+  // Simüle doğrulama kodu
+  String _sentPhoneCode = "1234";
+  String _sentEmailCode = "5678";
 
   Widget _buildCommonQuestions({bool showPhoto = false}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -90,7 +140,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 24),
-        // Ad Soyad (sadece harf)
         TextField(
           controller: _nameController,
           decoration: InputDecoration(
@@ -104,7 +153,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           ],
         ),
         const SizedBox(height: 16),
-        // Telefon (ülke kodu + sadece rakam)
         Row(
           children: [
             Container(
@@ -139,6 +187,16 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
                   filled: true,
                   fillColor: isDark ? Colors.white10 : Colors.grey[100],
+                  suffixIcon: _isPhoneVerified
+                      ? const Icon(Icons.check, color: Colors.green)
+                      : TextButton(
+                          child: const Text("Doğrula"),
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Telefon kodu gönderildi: $_sentPhoneCode")),
+                            );
+                          },
+                        ),
                 ),
                 keyboardType: TextInputType.number,
                 inputFormatters: [
@@ -148,8 +206,40 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             ),
           ],
         ),
+        if (!_isPhoneVerified)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _verifyPhoneController,
+                    decoration: const InputDecoration(
+                      labelText: "Telefon Kodu",
+                    ),
+                  ),
+                ),
+                TextButton(
+                  child: const Text("Onayla"),
+                  onPressed: () {
+                    if (_verifyPhoneController.text == _sentPhoneCode) {
+                      setState(() {
+                        _isPhoneVerified = true;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Telefon doğrulandı!")),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Kod yanlış!")),
+                      );
+                    }
+                  },
+                )
+              ],
+            ),
+          ),
         const SizedBox(height: 16),
-        // T.C. Kimlik No (sadece rakam)
         TextField(
           controller: _tcController,
           decoration: InputDecoration(
@@ -164,7 +254,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
           ],
         ),
         const SizedBox(height: 16),
-        // E-posta
         TextField(
           controller: _emailController,
           decoration: InputDecoration(
@@ -172,11 +261,53 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
             filled: true,
             fillColor: isDark ? Colors.white10 : Colors.grey[100],
+            suffixIcon: _isEmailVerified
+                ? const Icon(Icons.check, color: Colors.green)
+                : TextButton(
+                    child: const Text("Doğrula"),
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("E-posta kodu gönderildi: $_sentEmailCode")),
+                      );
+                    },
+                  ),
           ),
           keyboardType: TextInputType.emailAddress,
         ),
+        if (!_isEmailVerified)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _verifyEmailController,
+                    decoration: const InputDecoration(
+                      labelText: "E-posta Kodu",
+                    ),
+                  ),
+                ),
+                TextButton(
+                  child: const Text("Onayla"),
+                  onPressed: () {
+                    if (_verifyEmailController.text == _sentEmailCode) {
+                      setState(() {
+                        _isEmailVerified = true;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("E-posta doğrulandı!")),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Kod yanlış!")),
+                      );
+                    }
+                  },
+                )
+              ],
+            ),
+          ),
         const SizedBox(height: 16),
-        // Adres
         TextField(
           controller: _addressController,
           decoration: InputDecoration(
@@ -186,6 +317,17 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             fillColor: isDark ? Colors.white10 : Colors.grey[100],
           ),
           maxLines: 2,
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          controller: _passwordController,
+          decoration: InputDecoration(
+            labelText: 'Şifre',
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+            filled: true,
+            fillColor: isDark ? Colors.white10 : Colors.grey[100],
+          ),
+          obscureText: true,
         ),
         if (showPhoto) ...[
           const SizedBox(height: 20),
@@ -230,19 +372,16 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         SizedBox(
           width: double.infinity,
           child: ElevatedButton(
-            onPressed: showPhoto
-                ? (_selectedImages.length >= 3
-                    ? () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Form başarıyla gönderildi!')),
-                        );
-                      }
-                    : null)
-                : () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Form başarıyla gönderildi!')),
-                    );
-                  },
+            onPressed: (_isPhoneVerified && _isEmailVerified)
+                ? () {
+                    setState(() {
+                      _isLoggedIn = true;
+                      _rememberedEmail = _emailController.text;
+                      _rememberedPhoto = _selectedImages.isNotEmpty ? _selectedImages.first.path : null;
+                    });
+                    Navigator.of(context).pushReplacementNamed('/home');
+                  }
+                : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
               foregroundColor: Colors.white,
@@ -268,6 +407,222 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     return const SizedBox.shrink();
   }
 
+  // --- BURADAN İTİBAREN DEĞİŞTİRİLDİ ---
+  Widget _buildSignInScreen() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final primaryColor = Colors.blueAccent;
+    final textStyle = GoogleFonts.pacifico(
+      fontSize: 15,
+      color: isDark ? Colors.white70 : Colors.black87,
+    );
+    final buttonTextStyle = GoogleFonts.alfaSlabOne(
+      fontSize: 16,
+      color: Colors.black, // Giriş Yap yazısı siyah
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Geri butonu
+          Align(
+            alignment: Alignment.centerLeft,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: _goToSplashPage,
+            ),
+          ),
+          const SizedBox(height: 8),
+          if (_showOnlyPasswordScreen && _rememberedEmail != null)
+            Column(
+              children: [
+                if (_rememberedPhoto != null)
+                  CircleAvatar(
+                    backgroundImage: FileImage(File(_rememberedPhoto!)),
+                    radius: 40,
+                  )
+                else
+                  const CircleAvatar(
+                    child: Icon(Icons.person, size: 40),
+                    radius: 40,
+                  ),
+                const SizedBox(height: 12),
+                Text(
+                  _rememberedEmail!,
+                  style: GoogleFonts.alfaSlabOne(fontWeight: FontWeight.bold, fontSize: 18, color: primaryColor),
+                ),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: _onlyPasswordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Şifre',
+                    border: OutlineInputBorder(),
+                  ),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacementNamed('/home');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    foregroundColor: Colors.black,
+                    minimumSize: const Size.fromHeight(50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                  child: Text('Giriş Yap', style: buttonTextStyle),
+                ),
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _showOnlyPasswordScreen = false;
+                    });
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white10 : Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Text(
+                      'Farklı bir hesapla giriş yap',
+                      textAlign: TextAlign.center,
+                      style: textStyle.copyWith(
+                        color: isDark ? Colors.white70 : Colors.black87,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          else
+            Column(
+              children: [
+                TextField(
+                  controller: _signInEmailController,
+                  decoration: InputDecoration(
+                    labelText: 'E-posta',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    filled: true,
+                    fillColor: isDark ? Colors.white10 : Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: _signInPasswordController,
+                  decoration: InputDecoration(
+                    labelText: 'Şifre',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    filled: true,
+                    fillColor: isDark ? Colors.white10 : Colors.white,
+                  ),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 12),
+                // Beni Hatırla barı
+                Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white10 : Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          'Beni Hatırla',
+                          style: textStyle.copyWith(
+                            color: isDark ? Colors.white70 : Colors.black87,
+                            fontWeight: FontWeight.normal,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      Switch(
+                        value: _isRememberMe,
+                        onChanged: (val) {
+                          setState(() {
+                            _isRememberMe = val;
+                          });
+                        },
+                        activeColor: Colors.orange,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_isRememberMe) {
+                      setState(() {
+                        _rememberedEmail = _signInEmailController.text;
+                        _rememberedPhoto = null;
+                        _showOnlyPasswordScreen = true;
+                      });
+                    }
+                    Navigator.of(context).pushReplacementNamed('/home');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    foregroundColor: Colors.black, // Yazı rengi siyah
+                    minimumSize: const Size.fromHeight(50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                  child: Text('Giriş Yap', style: buttonTextStyle),
+                ),
+                const SizedBox(height: 12),
+                // Farklı bir hesapla giriş yap barı
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _showOnlyPasswordScreen = false;
+                      _signInEmailController.clear();
+                      _signInPasswordController.clear();
+                    });
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white10 : Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: Text(
+                      'Farklı bir hesapla giriş yap',
+                      textAlign: TextAlign.center,
+                      style: textStyle.copyWith(
+                        color: isDark ? Colors.white70 : Colors.black87,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+  // --- DEĞİŞİKLİK BİTTİ ---
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -290,10 +645,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             child: Column(
               children: [
                 const SizedBox(height: 32),
-                // Logo veya ikon
                 Icon(Icons.home_rounded, size: 56, color: primaryColor),
                 const SizedBox(height: 12),
-                // Başlık
                 Text(
                   'YORUMSAL',
                   style: GoogleFonts.alfaSlabOne(
@@ -324,7 +677,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             ElevatedButton(
-                              onPressed: _goToRolePage,
+                              onPressed: _goToSignInPage,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: primaryColor,
                                 foregroundColor: Colors.white,
@@ -381,28 +734,38 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                               icon: const Icon(Icons.g_mobiledata, size: 28),
                               label: const Text('Continue with Google'),
                             ),
+                            const SizedBox(height: 16),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                Navigator.of(context).pushReplacementNamed('/home');
+                              },
+                              icon: const Icon(Icons.flash_on),
+                              label: const Text('Hızlı Giriş'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange,
+                                foregroundColor: Colors.white,
+                                minimumSize: const Size.fromHeight(50),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18),
+                                ),
+                                elevation: 2,
+                              ),
+                            ),
                           ],
                         ),
                       ),
-                      // 2. Sayfa: Rol seçimi ve sorular
+                      // 2. Sayfa: Create Account (Rol seçimi ve sorular)
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Geri butonu sol üstte
+                            // Geri butonu
                             Row(
                               children: [
                                 IconButton(
+                                  onPressed: _goToSplashPage,
                                   icon: const Icon(Icons.arrow_back),
-                                  tooltip: 'Geri',
-                                  onPressed: () {
-                                    _pageController.animateToPage(
-                                      0,
-                                      duration: const Duration(milliseconds: 400),
-                                      curve: Curves.easeInOut,
-                                    );
-                                  },
                                 ),
                                 const Spacer(),
                               ],
@@ -411,64 +774,57 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                // ----------- DÜZENLENEN KISIM -----------
                                 Expanded(
-                                  child: ElevatedButton.icon(
+                                  child: ElevatedButton(
                                     onPressed: () => _selectRole('owner'),
-                                    icon: const Icon(Icons.home),
-                                    label: const Text('Ev Sahibi'),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: _selectedRole == 'owner'
                                           ? primaryColor
                                           : (isDark ? Colors.white12 : Colors.grey[200]),
                                       foregroundColor: _selectedRole == 'owner'
                                           ? Colors.white
-                                          : (isDark ? Colors.white : Colors.black),
+                                          : (isDark ? Colors.white : Colors.black87),
                                       minimumSize: const Size.fromHeight(48),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(18),
+                                        borderRadius: BorderRadius.circular(16),
                                       ),
-                                      elevation: 1,
+                                      elevation: _selectedRole == 'owner' ? 2 : 0,
                                     ),
+                                    child: const Text('Ev Sahibi'),
                                   ),
                                 ),
                                 const SizedBox(width: 16),
                                 Expanded(
-                                  child: ElevatedButton.icon(
+                                  child: ElevatedButton(
                                     onPressed: () => _selectRole('reviewer'),
-                                    icon: const Icon(Icons.person),
-                                    label: const Text('Yorumcu'),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: _selectedRole == 'reviewer'
                                           ? primaryColor
                                           : (isDark ? Colors.white12 : Colors.grey[200]),
                                       foregroundColor: _selectedRole == 'reviewer'
                                           ? Colors.white
-                                          : (isDark ? Colors.white : Colors.black),
+                                          : (isDark ? Colors.white : Colors.black87),
                                       minimumSize: const Size.fromHeight(48),
                                       shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(18),
+                                        borderRadius: BorderRadius.circular(16),
                                       ),
-                                      elevation: 1,
+                                      elevation: _selectedRole == 'reviewer' ? 2 : 0,
                                     ),
+                                    child: const Text('Yorumcu'),
                                   ),
                                 ),
-                                // ----------- DÜZENLENEN KISIM SONU -----------
                               ],
                             ),
                             Expanded(
                               child: SingleChildScrollView(
-                                child: AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 300),
-                                  child: _selectedRole == null
-                                      ? const SizedBox.shrink()
-                                      : _buildRoleQuestions(),
-                                ),
+                                child: _buildRoleQuestions(),
                               ),
                             ),
                           ],
                         ),
                       ),
+                      // 3. Sayfa: Sign In
+                      _buildSignInScreen(),
                     ],
                   ),
                 ),
@@ -478,5 +834,4 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         ],
       ),
     );
-  }
-}
+  }}

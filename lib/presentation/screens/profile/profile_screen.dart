@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../settings/settings_screen.dart';
+import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,11 +17,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       backgroundColor: isDarkMode ? const Color(0xFF121212) : const Color(0xFF1E88E5),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const SettingsScreen()),
+              );
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            const SizedBox(height: 40),
+            const SizedBox(height: 16),
 
             // PROFİL FOTO
             Container(
@@ -83,11 +99,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 32),
 
             // PROFİL SEÇENEKLERİ
-            _buildProfileOption(
+             _buildProfileOption(
               context,
               icon: Icons.edit,
               title: 'Profili Düzenle',
-              onTap: () {},
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+                );
+              },
             ),
             _buildProfileOption(
               context,
@@ -107,12 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               title: 'Yardım',
               onTap: () {},
             ),
-            _buildProfileOption(
-              context,
-              icon: Icons.logout,
-              title: 'Çıkış Yap',
-              onTap: () {},
-            ),
+            // Çıkış ve ayarlar burada kaldırıldı, ayarlar sadece sağ üstte ikon olarak var
           ],
         ),
       ),

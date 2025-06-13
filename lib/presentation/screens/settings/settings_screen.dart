@@ -14,53 +14,69 @@ class SettingsScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: isDarkMode ? Colors.grey.shade900 : const Color(0xFF1E88E5),
-      body: ListView(
-        padding: const EdgeInsets.all(16.0),
-        children: [
-          _buildSettingCard(
-            context: context,
-            icon: themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
-            title: 'Karanlık Mod',
-            trailing: Switch(
-              value: themeProvider.isDarkMode,
-              onChanged: (_) => themeProvider.toggleTheme(),
-              activeColor: Theme.of(context).colorScheme.primary,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: const Text(
+          'Ayarlar',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: false,
+      ),
+      body: Center(
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(16.0),
+          children: [
+            _buildSettingCard(
+              context: context,
+              icon: themeProvider.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+              title: 'Karanlık Mod',
+              trailing: Switch(
+                value: themeProvider.isDarkMode,
+                onChanged: (_) => themeProvider.toggleTheme(),
+                activeColor: Theme.of(context).colorScheme.primary,
+              ),
             ),
-          ),
-          _buildSettingCard(
-            context: context,
-            icon: Icons.language,
-            title: 'Uygulama Dili',
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Dil seçimi yakında eklenecektir.')),
-              );
-            },
-          ),
-          _buildSettingCard(
-            context: context,
-            icon: Icons.notifications_outlined,
-            title: 'Bildirim Ayarları',
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Bildirim ayarları yakında eklenecektir.')),
-              );
-            },
-          ),
-          _buildSettingCard(
-            context: context,
-            icon: Icons.info_outline,
-            title: 'Hakkında',
-            onTap: () {
-              showAboutDialog(
-                context: context,
-                applicationName: 'YORUMSAL',
-                applicationVersion: '1.0.0',
-                applicationLegalese: '© 2025 Tüm Hakları Saklıdır',
-              );
-            },
-          ),
-          if (authProvider.currentUser != null)
+            _buildSettingCard(
+              context: context,
+              icon: Icons.language,
+              title: 'Uygulama Dili',
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Dil seçimi yakında eklenecektir.')),
+                );
+              },
+            ),
+            _buildSettingCard(
+              context: context,
+              icon: Icons.notifications_outlined,
+              title: 'Bildirim Ayarları',
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Bildirim ayarları yakında eklenecektir.')),
+                );
+              },
+            ),
+            _buildSettingCard(
+              context: context,
+              icon: Icons.info_outline,
+              title: 'Hakkında',
+              onTap: () {
+                showAboutDialog(
+                  context: context,
+                  applicationName: 'YORUMSAL',
+                  applicationVersion: '1.0.0',
+                  applicationLegalese: '© 2025 Tüm Hakları Saklıdır',
+                );
+              },
+            ),
             _buildSettingCard(
               context: context,
               icon: Icons.logout,
@@ -69,9 +85,11 @@ class SettingsScreen extends StatelessWidget {
               textColor: Theme.of(context).colorScheme.error,
               onTap: () async {
                 await authProvider.signOut();
+                Navigator.of(context).pushReplacementNamed('/splash');
               },
             ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -88,12 +106,12 @@ class SettingsScreen extends StatelessWidget {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: 18),
       decoration: BoxDecoration(
         color: isDarkMode ? Colors.grey.shade800 : Colors.white,
         borderRadius: BorderRadius.circular(16),
         boxShadow: isDarkMode
-            ? [] // Dark mode'da gölge yok
+            ? []
             : [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.05),
@@ -103,19 +121,23 @@ class SettingsScreen extends StatelessWidget {
               ],
       ),
       child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         leading: Icon(icon, color: iconColor ?? Theme.of(context).iconTheme.color),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: textColor ?? Theme.of(context).textTheme.bodyMedium?.color,
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
+        title: Center(
+          child: Text(
+            title,
+            style: TextStyle(
+              color: textColor ?? Theme.of(context).textTheme.bodyMedium?.color,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
           ),
         ),
         trailing: trailing ??
             Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey.shade500),
-        onTap: onTap,
-      ),
-    );
-  }
-}
+              onTap: onTap,
+            ),
+          );
+        }
+      }

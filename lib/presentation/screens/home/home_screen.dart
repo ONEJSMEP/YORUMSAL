@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../property/property_list_screen.dart';
 import '../map/map_screen.dart';
 import '../profile/profile_screen.dart';
-import '../settings/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = '/home';
@@ -16,17 +15,13 @@ class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
 
   final List<Widget> _screens = [
-    const PropertyListScreen(),
-    MapScreen(),
+    CombinedMapAndListScreen(),
     const ProfileScreen(),
-    const SettingsScreen(),
   ];
 
   final List<String> _screenTitles = [
     '',
-    'Harita',
     'Profil',
-    'Ayarlar',
   ];
 
   void _onItemTapped(int index) {
@@ -40,38 +35,50 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_screenTitles[_selectedIndex]),
+        automaticallyImplyLeading: false,
       ),
       body: IndexedStack(
         index: _selectedIndex,
         children: _screens,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Evler',
+            icon: Container(
+              padding: const EdgeInsets.only(top: 4),
+              child: Icon(Icons.map_rounded, size: 38), // Büyük harita ikonu
+            ),
+            label: '', // Yazı yok
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map_outlined),
-            activeIcon: Icon(Icons.map),
-            label: 'Harita',
-          ),
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
             activeIcon: Icon(Icons.person),
             label: 'Profil',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
-            activeIcon: Icon(Icons.settings),
-            label: 'Ayarlar',
-          ),
+          // Sağ taraf boş bırakılıyor, eklenmiyor
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
       ),
+    );
+  }
+}
+
+// Harita üstte, evler listesi altta birleşik ekran
+class CombinedMapAndListScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.4,
+          child: MapScreen(),
+        ),
+        Expanded(
+          child: PropertyListScreen(),
+        ),
+      ],
     );
   }
 }

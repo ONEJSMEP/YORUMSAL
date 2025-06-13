@@ -30,8 +30,13 @@ class MyApp extends StatelessWidget {
           themeMode:
               themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
           home: homeWidget,
-        );
-      },
-    );
-  }
-}
+          routes: {
+            '/home': (context) => const HomeScreen(),
+            '/splash': (context) => const SplashScreen(),
+            // Diğer route'lar burada tanımlanabilir
+          },
+              );
+            },
+          );
+        }
+      }
