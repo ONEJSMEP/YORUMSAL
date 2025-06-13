@@ -12,39 +12,41 @@ class AppColors {
 
 const String appFontFamily = 'Poppins';
 
-// LIGHT
+// LIGHT THEME
 final ThemeData modernLightTheme = ThemeData(
   useMaterial3: true,
   fontFamily: appFontFamily,
   brightness: Brightness.light,
-  colorScheme: ColorScheme.light(
+  colorScheme: const ColorScheme.light(
     primary: AppColors.primary,
     secondary: AppColors.secondary,
     surface: AppColors.surfaceLight,
+    background: AppColors.backgroundLight,
     onPrimary: Colors.white,
     onSecondary: Colors.black,
     onSurface: Colors.black87,
+    onBackground: Colors.black87,
     error: Colors.redAccent,
     onError: Colors.white,
   ),
   scaffoldBackgroundColor: AppColors.backgroundLight,
   appBarTheme: const AppBarTheme(
-    backgroundColor: Colors.white,
+    backgroundColor: AppColors.surfaceLight,
     foregroundColor: Colors.black87,
     elevation: 0.5,
     centerTitle: true,
   ),
-  cardTheme: CardThemeData(
+  cardTheme: const CardThemeData(
     color: AppColors.surfaceLight,
     elevation: 3,
-    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-    shape: const RoundedRectangleBorder(
+    margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+    shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(16)),
     ),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
+      backgroundColor: Colors.black,
       foregroundColor: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
       shape: const RoundedRectangleBorder(
@@ -84,18 +86,20 @@ final ThemeData modernLightTheme = ThemeData(
   ),
 );
 
-// DARK
+// DARK THEME
 final ThemeData modernDarkTheme = ThemeData(
   useMaterial3: true,
   fontFamily: appFontFamily,
   brightness: Brightness.dark,
-  colorScheme: ColorScheme.dark(
+  colorScheme: const ColorScheme.dark(
     primary: AppColors.primary,
     secondary: AppColors.secondary,
     surface: AppColors.surfaceDark,
+    background: AppColors.backgroundDark,
     onPrimary: Colors.white,
-    onSecondary: Colors.black,
+    onSecondary: Colors.white,
     onSurface: Colors.white70,
+    onBackground: Colors.white70,
     error: Colors.redAccent,
     onError: Colors.white,
   ),
@@ -106,18 +110,18 @@ final ThemeData modernDarkTheme = ThemeData(
     elevation: 0.5,
     centerTitle: true,
   ),
-  cardTheme: CardThemeData(
+  cardTheme: const CardThemeData(
     color: AppColors.surfaceDark,
     elevation: 2,
-    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-    shape: const RoundedRectangleBorder(
+    margin: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+    shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(16)),
     ),
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
-      foregroundColor: Colors.black,
+      backgroundColor: AppColors.secondary,
+      foregroundColor: Colors.white,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -138,13 +142,13 @@ final ThemeData modernDarkTheme = ThemeData(
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: const BorderSide(color: AppColors.primary, width: 2),
+      borderSide: BorderSide(color: AppColors.primary, width: 2),
     ),
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     backgroundColor: AppColors.surfaceDark,
-    selectedItemColor: Color.fromARGB(255, 0, 0, 0),
-    unselectedItemColor: Colors.grey,
+    selectedItemColor: AppColors.secondary,
+    unselectedItemColor: Colors.white70,
     type: BottomNavigationBarType.fixed,
     showUnselectedLabels: true,
   ),

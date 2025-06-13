@@ -15,76 +15,127 @@ class AuthScreen extends StatelessWidget {
     final authProvider = Provider.of<AuthProvider>(context);
 
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blue.shade500, Colors.indigo.shade600],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Logo veya ikon
-                Icon(Icons.home, size: 64, color: Colors.white),
-                const SizedBox(height: 16),
-
-                // Uygulama adı
-                const Text(
-                  'YORUMSAL',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-
-                const SizedBox(height: 32),
-
-                // Form kartı
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.95),
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 10,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      AuthForm(userRole: userRole),
-
-                      const SizedBox(height: 16),
-
-                      if (authProvider.status == AuthStatus.loading)
-                        const CircularProgressIndicator(),
-
-                      if (authProvider.errorMessage != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: Text(
-                            authProvider.errorMessage!,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.error,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ],
+      backgroundColor: const Color(0xFF13161F),
+      body: SafeArea(
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+            // YORUMSAL YAZISI
+            const Text(
+              'YORUMSAL',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.4,
+              ),
+              textAlign: TextAlign.center,
             ),
-          ),
+            const SizedBox(height: 48),
+            // Sign In Buton
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF4067F6),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                child: const Text("Sign In"),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Create Account Buton
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF23262C),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(double.infinity, 48),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                child: const Text("Create Account"),
+              ),
+            ),
+            const SizedBox(height: 22),
+            const Text("Or Login with", style: TextStyle(color: Colors.white70, fontSize: 15)),
+            const SizedBox(height: 16),
+            // GOOGLE İLE GİRİŞ BUTONU - SİYAH KUTULU
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: Colors.white10),
+                  color: Colors.black,
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(30),
+                    onTap: () {
+                      // Google ile giriş işlemi
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/google_icon.png',
+                            width: 24,
+                            height: 24,
+                          ),
+                          const SizedBox(width: 10),
+                          const Text(
+                            "Continue with Google",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
+            // ALTTA TERMS AND CONDITIONS
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text.rich(
+                TextSpan(
+                  text: "By creating an account or signing you agree to our ",
+                  style: const TextStyle(color: Colors.white38, fontSize: 12),
+                  children: [
+                    TextSpan(
+                      text: "Terms and Conditions",
+                      style: const TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Colors.white70,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  ],
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const Spacer(),
+          ],
         ),
       ),
     );

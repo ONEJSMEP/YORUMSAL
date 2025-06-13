@@ -1,6 +1,6 @@
 class PropertyModel {
   final String id;
-  final String userId; // Mülkü ekleyen kullanıcının ID'si
+  final String userId;
   final String title;
   final String address;
   final String? description;
@@ -16,7 +16,6 @@ class PropertyModel {
   final String status;
   final DateTime createdAt;
   final DateTime? updatedAt;
-  // İsteğe bağlı: Ortalama puan ve yorum sayısı gibi alanlar eklenebilir
   double? averageRating;
   int? reviewCount;
 
@@ -44,12 +43,12 @@ class PropertyModel {
 
   factory PropertyModel.fromMap(Map<String, dynamic> map) {
     return PropertyModel(
-      id: map['id'] as String,
-      userId: map['user_id'] as String,
-      title: map['title'] as String,
-      address: map['address'] as String,
+      id: map['id']?.toString() ?? '',
+      userId: map['user_id']?.toString() ?? '',
+      title: map['title']?.toString() ?? '',
+      address: map['address']?.toString() ?? '',
       description: map['description'] as String?,
-      pricePerMonth: map['price_per_month'] as int,
+      pricePerMonth: map['price_per_month'] as int? ?? 0,
       bedrooms: map['bedrooms'] as int? ?? 1,
       bathrooms: map['bathrooms'] as int? ?? 1,
       areaSqft: map['area_sqft'] as int?,
@@ -58,11 +57,10 @@ class PropertyModel {
       imageUrls: map['image_urls'] != null ? List<String>.from(map['image_urls']) : null,
       amenities: map['amenities'] != null ? List<String>.from(map['amenities']) : null,
       propertyType: map['property_type'] as String?,
-      status: map['status'] as String? ?? 'available',
-      createdAt: DateTime.parse(map['created_at'] as String),
-      updatedAt: map['updated_at'] != null ? DateTime.parse(map['updated_at'] as String) : null,
-      // Ortalama puan ve yorum sayısı için ek mantık gerekebilir (örneğin view'dan geliyorsa)
-      averageRating: map['average_rating'] as double?,
+      status: map['status']?.toString() ?? 'available',
+      createdAt: DateTime.tryParse(map['created_at'] ?? '') ?? DateTime.now(),
+      updatedAt: map['updated_at'] != null ? DateTime.tryParse(map['updated_at']) : null,
+      averageRating: map['average_rating'] != null ? (map['average_rating'] as num).toDouble() : null,
       reviewCount: map['review_count'] as int?,
     );
   }

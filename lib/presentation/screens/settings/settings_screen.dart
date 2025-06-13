@@ -10,11 +10,10 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final authProvider = Provider.of<AuthProvider>(context);
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF1E88E5),
-      
-   
+      backgroundColor: isDarkMode ? Colors.grey.shade900 : const Color(0xFF1E88E5),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
@@ -86,30 +85,35 @@ class SettingsScreen extends StatelessWidget {
     Widget? trailing,
     VoidCallback? onTap,
   }) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDarkMode ? Colors.grey.shade800 : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: isDarkMode
+            ? [] // Dark mode'da gölge yok
+            : [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: ListTile(
-        leading: Icon(icon, color: iconColor ?? const Color(0xFF1E88E5)),
+        leading: Icon(icon, color: iconColor ?? Theme.of(context).iconTheme.color),
         title: Text(
           title,
           style: TextStyle(
-            color: textColor ?? Colors.black87,
+            color: textColor ?? Theme.of(context).textTheme.bodyMedium?.color,
             fontSize: 15,
             fontWeight: FontWeight.w500,
           ),
         ),
-        trailing: trailing ?? const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+        trailing: trailing ??
+            Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey.shade500),
         onTap: onTap,
       ),
     );

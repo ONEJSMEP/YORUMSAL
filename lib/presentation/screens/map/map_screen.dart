@@ -11,21 +11,19 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   final MapController _mapController = MapController();
-  LatLng _defaultCenter = LatLng(41.015137, 28.979530);
+  final LatLng _defaultCenter = LatLng(41.015137, 28.979530);
   String _tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
   List<String> _subdomains = ['a', 'b', 'c'];
 
   @override
   void initState() {
     super.initState();
-    // Başlangıçta haritayı varsayılan konuma ayarla
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _mapController.move(_defaultCenter, 13.0);
     });
   }
 
   void _goToMyLocation() {
-    // Gerçek kullanıcı konumunu burada alıp kullanabilirsiniz
     _mapController.move(_defaultCenter, 15.0);
   }
 
@@ -36,22 +34,22 @@ class _MapScreenState extends State<MapScreen> {
         children: [
           ListTile(
             leading: const Icon(Icons.restaurant),
-            title: const Text('Restaurants'),
+            title: const Text('Restoranlar'),
             onTap: () => Navigator.pop(context),
           ),
           ListTile(
             leading: const Icon(Icons.coffee),
-            title: const Text('Coffee'),
+            title: const Text('Kafeler'),
             onTap: () => Navigator.pop(context),
           ),
           ListTile(
             leading: const Icon(Icons.local_gas_station),
-            title: const Text('Gas'),
+            title: const Text('Benzin İstasyonları'),
             onTap: () => Navigator.pop(context),
           ),
           ListTile(
             leading: const Icon(Icons.shopping_cart),
-            title: const Text('Groceries'),
+            title: const Text('Marketler'),
             onTap: () => Navigator.pop(context),
           ),
         ],
@@ -66,7 +64,7 @@ class _MapScreenState extends State<MapScreen> {
         children: [
           ListTile(
             leading: const Icon(Icons.map),
-            title: const Text('Explore'),
+            title: const Text('Keşfet'),
             onTap: () {
               setState(() {
                 _tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -77,7 +75,7 @@ class _MapScreenState extends State<MapScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.directions_car),
-            title: const Text('Driving'),
+            title: const Text('Sürüş'),
             onTap: () {
               setState(() {
                 _tileUrl = 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png';
@@ -88,7 +86,7 @@ class _MapScreenState extends State<MapScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.directions_transit),
-            title: const Text('Transit'),
+            title: const Text('Toplu Taşıma'),
             onTap: () {
               setState(() {
                 _tileUrl = 'https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png';
@@ -99,7 +97,7 @@ class _MapScreenState extends State<MapScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.satellite),
-            title: const Text('Satellite'),
+            title: const Text('Uydu'),
             onTap: () {
               setState(() {
                 _tileUrl =
@@ -111,6 +109,30 @@ class _MapScreenState extends State<MapScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _mapButton(IconData icon, VoidCallback onPressed, {String? heroTag}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return FloatingActionButton(
+      mini: true,
+      heroTag: heroTag,
+      backgroundColor: isDark ? Colors.grey.shade800 : null,
+      foregroundColor: isDark ? Colors.white : null,
+      onPressed: onPressed,
+      child: Icon(icon),
+    );
+  }
+
+  Widget _mapButtonExtended(IconData icon, String label, VoidCallback onPressed) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return FloatingActionButton.extended(
+      heroTag: label,
+      backgroundColor: isDark ? Colors.grey.shade800 : null,
+      foregroundColor: isDark ? Colors.white : null,
+      onPressed: onPressed,
+      icon: Icon(icon),
+      label: Text(label),
     );
   }
 
@@ -151,61 +173,26 @@ class _MapScreenState extends State<MapScreen> {
           right: 16,
           child: Column(
             children: [
-              FloatingActionButton(
-                mini: true,
-                heroTag: 'zoom_in',
-                onPressed: () => _mapController.move(_mapController.center, _mapController.zoom + 1),
-                child: const Icon(Icons.add),
-              ),
+              _mapButton(Icons.add, () => _mapController.move(_mapController.center, _mapController.zoom + 1), heroTag: 'zoom_in'),
               const SizedBox(height: 8),
-              FloatingActionButton(
-                mini: true,
-                heroTag: 'zoom_out',
-                onPressed: () => _mapController.move(_mapController.center, _mapController.zoom - 1),
-                child: const Icon(Icons.remove),
-              ),
+              _mapButton(Icons.remove, () => _mapController.move(_mapController.center, _mapController.zoom - 1), heroTag: 'zoom_out'),
             ],
           ),
         ),
         Positioned(
           bottom: 16,
           left: 16,
-          child: FloatingActionButton.extended(
-            heroTag: 'nearby',
-            onPressed: _showNearbyOptions,
-            icon: const Icon(Icons.place),
-            label: const Text('Nearby'),
-          ),
+          child: _mapButtonExtended(Icons.place, 'Yakındakiler', _showNearbyOptions),
         ),
         Positioned(
           bottom: 16,
           right: 16,
-          child: FloatingActionButton(
-            heroTag: 'locate',
-            onPressed: _goToMyLocation,
-            child: const Icon(Icons.my_location),
-          ),
+          child: _mapButton(Icons.my_location, _goToMyLocation, heroTag: 'locate'),
         ),
         Positioned(
           bottom: 16,
           left: MediaQuery.of(context).size.width / 2 - 28,
-          child: FloatingActionButton(
-            heroTag: 'map_type',
-            onPressed: _showMapTypeSheet,
-            child: const Icon(Icons.layers),
-          ),
-        ),
-        Positioned(
-          bottom: 8,
-          right: 8,
-          child: Container(
-            padding: const EdgeInsets.all(4),
-            color: Colors.white70,
-            child: const Text(
-              '© OpenStreetMap Contributors',
-              style: TextStyle(fontSize: 10),
-            ),
-          ),
+          child: _mapButton(Icons.layers, _showMapTypeSheet, heroTag: 'map_type'),
         ),
       ],
     );

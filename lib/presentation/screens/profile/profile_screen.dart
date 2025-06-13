@@ -10,8 +10,11 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final textColor = Theme.of(context).textTheme.bodyLarge?.color ?? Colors.black;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF1E88E5),
+      backgroundColor: isDarkMode ? const Color(0xFF121212) : const Color(0xFF1E88E5),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -24,25 +27,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
-                  colors: [Colors.blue.shade400, Colors.indigo.shade600],
+                  colors: isDarkMode
+                      ? [Colors.grey.shade800, Colors.grey.shade900]
+                      : [Colors.blue.shade400, Colors.indigo.shade600],
                 ),
               ),
-              child: const CircleAvatar(
+              child: CircleAvatar(
                 radius: 50,
-                backgroundColor: Colors.white,
-                child: Icon(Icons.person, size: 48, color: Colors.grey),
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                child: Icon(Icons.person, size: 48, color: Colors.grey.shade400),
               ),
             ),
 
             const SizedBox(height: 16),
 
             // KULLANICI ADI
-            const Text(
+            Text(
               'Kullanıcı Adı',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: textColor,
               ),
             ),
 
@@ -52,13 +57,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.orange.shade50,
+                color: isDarkMode ? Colors.orange.shade100.withOpacity(0.2) : Colors.orange.shade50,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: const Text(
+              child: Text(
                 'VIP',
                 style: TextStyle(
-                  color: Color.fromARGB(255, 0, 0, 0),
+                  color: textColor,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                 ),
@@ -68,10 +73,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 8),
 
             // E-POSTA
-            const Text(
+            Text(
               'user@example.com',
               style: TextStyle(
-                color: Color.fromARGB(255, 0, 0, 0),
+                color: textColor,
               ),
             ),
 
@@ -79,26 +84,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // PROFİL SEÇENEKLERİ
             _buildProfileOption(
+              context,
               icon: Icons.edit,
               title: 'Profili Düzenle',
               onTap: () {},
             ),
             _buildProfileOption(
+              context,
               icon: Icons.comment_outlined,
               title: 'Yorumlarım',
               onTap: () {},
             ),
             _buildProfileOption(
+              context,
               icon: Icons.history,
               title: 'Görüntüleme Geçmişi',
               onTap: () {},
             ),
             _buildProfileOption(
+              context,
               icon: Icons.help_outline,
               title: 'Yardım',
               onTap: () {},
             ),
             _buildProfileOption(
+              context,
               icon: Icons.logout,
               title: 'Çıkış Yap',
               onTap: () {},
@@ -109,31 +119,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileOption({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildProfileOption(BuildContext context,
+      {required IconData icon,
+      required String title,
+      required VoidCallback onTap}) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor =
+        isDarkMode ? Colors.grey.shade800 : Colors.white;
+    final textColor = Theme.of(context).textTheme.bodyMedium?.color ?? Colors.black;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: isDarkMode
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.08),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: ListTile(
-        leading: Icon(icon, color: Colors.blue.shade600),
+        leading: Icon(icon, color: Theme.of(context).iconTheme.color),
         title: Text(
           title,
-          style: const TextStyle(fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: textColor,
+          ),
         ),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+        trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey.shade500),
         onTap: onTap,
       ),
     );

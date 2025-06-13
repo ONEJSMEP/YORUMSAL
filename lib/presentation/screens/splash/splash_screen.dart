@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import '../auth/auth_screen.dart';
+import 'package:provider/provider.dart';
+import '../../screens/auth/auth_screen.dart';
+import '../../screens/home/home_screen.dart';
+import '../../providers/auth_provider.dart';
 
 class SplashScreen extends StatefulWidget {
   static const routeName = '/splash';
@@ -37,89 +40,161 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     );
   }
 
+  Future<void> _quickLogin() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    const testEmail = 'y@gmail.com';
+    const testPassword = '1234567';
+
+    final success = await authProvider.signIn(testEmail, testPassword);
+    if (!mounted) return;
+
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Hızlı giriş başarısız: ${authProvider.errorMessage ?? 'Bilinmeyen hata'}')),
+      );
+    }
+  }
+
+  void _askUserRole() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.home),
+            title: const Text('Ev Sahibi Olarak Devam Et'),
+            onTap: () {
+              Navigator.pop(context);
+              _navigateToAuth('owner');
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text('Yorumcu Olarak Devam Et'),
+            onTap: () {
+              Navigator.pop(context);
+              _navigateToAuth('reviewer');
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blue.shade500, Colors.indigo.shade600],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/giris_ev.jpg',
+            fit: BoxFit.cover,
           ),
-        ),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AnimatedBuilder(
-                  animation: _animationController,
-                  builder: (context, child) {
-                    return Transform.translate(
-                      offset: Offset(0, -10 * _animationController.value),
-                      child: Icon(
-                        Icons.home,
-                        size: 96,
-                        color: Colors.white,
+          Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.only(top: 48),
+                alignment: Alignment.topCenter,
+                child: Column(
+                  children: const [
+                    Text(
+                      'YORUMSAL',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color:  Colors.blueAccent,
                       ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'YORUMSAL',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Yorumlarla Kirala, Güvenle Yaşa!',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.blue.shade100,
-                  ),
-                ),
-                const SizedBox(height: 48),
-                ElevatedButton(
-                  onPressed: () => _navigateToAuth('owner'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.blue.shade700,
-                    minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
                     ),
-                  ),
-                  child: const Text(
-                    'Ev Sahibi Olarak Devam Et',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () => _navigateToAuth('reviewer'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.indigo.shade700,
-                    minimumSize: const Size.fromHeight(50),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                    SizedBox(height: 8),
+                    Text(
+                      'Yorumlarla Kirala, Güvenle Yaşa',
+                      style: TextStyle(fontSize: 14, color:  Color.fromARGB(255, 0, 0, 0)),
                     ),
-                  ),
-                  child: const Text(
-                    'Yorumcu Olarak Devam Et',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-        ),
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _askUserRole,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blueAccent,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size.fromHeight(50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: const Text('Sign In'),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: _askUserRole,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size.fromHeight(50),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: const Text('Create Account'),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: const [
+                        Expanded(child: Divider(color: Colors.white,)),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text('Or Login with', style: TextStyle(color: Colors.white,)),
+                        ),
+                        Expanded(child: Divider(color: Colors.white,)),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black87,
+                        minimumSize: const Size.fromHeight(45),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      icon: const Icon(Icons.g_mobiledata, size: 28),
+                      label: const Text('Continue with Google'),
+                    ),
+                    const SizedBox(height: 24),
+                    TextButton(
+                      onPressed: _quickLogin,
+                      child: const Text(
+                        'Hızlı Giriş (Geçici)',
+                        style: TextStyle(color: Colors.white54),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          )
+        ],
       ),
     );
   }
