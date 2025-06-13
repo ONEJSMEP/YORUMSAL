@@ -3,6 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:rental_review_app/services/auth_service.dart';
 
 class SplashScreen extends StatefulWidget {
   static const routeName = '/splash';
@@ -43,6 +46,9 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   String? _rememberedPhoto;
   bool _showOnlyPasswordScreen = false;
 
+  // EKLENDİ: AuthService örneği
+  final AuthService _authService = AuthService();
+
   @override
   void initState() {
     super.initState();
@@ -71,17 +77,16 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   }
 
   void _goToRolePage() {
-  setState(() {
-    _selectedRole = 'owner'; // Otomatik olarak ev sahibi seçili gelsin
-    _showOnlyPasswordScreen = false;
-  });
-  _pageController.animateToPage(
-    1,
-    duration: const Duration(milliseconds: 400),
-    curve: Curves.easeInOut,
-  );
-}
-
+    setState(() {
+      _selectedRole = 'owner'; // Otomatik olarak ev sahibi seçili gelsin
+      _showOnlyPasswordScreen = false;
+    });
+    _pageController.animateToPage(
+      1,
+      duration: const Duration(milliseconds: 400),
+      curve: Curves.easeInOut,
+    );
+  }
 
   void _goToSignInPage() {
     setState(() {
@@ -131,8 +136,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   }
 
   // Simüle doğrulama kodu
-  String _sentPhoneCode = "1234";
-  String _sentEmailCode = "5678";
+  final String _sentPhoneCode = "1234";
+  final String _sentEmailCode = "5678";
 
   Widget _buildCommonQuestions({bool showPhoto = false}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -407,7 +412,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     return const SizedBox.shrink();
   }
 
-  // --- BURADAN İTİBAREN DEĞİŞTİRİLDİ ---
   Widget _buildSignInScreen() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final primaryColor = Colors.blueAccent;
@@ -565,16 +569,28 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   ),
                 ),
                 const SizedBox(height: 16),
+                // --- E-POSTA/ŞİFRE İLE GİRİŞTE PROFİL KONTROLÜ EKLENDİ ---
                 ElevatedButton(
-                  onPressed: () {
-                    if (_isRememberMe) {
-                      setState(() {
-                        _rememberedEmail = _signInEmailController.text;
-                        _rememberedPhoto = null;
-                        _showOnlyPasswordScreen = true;
-                      });
+                  onPressed: () async {
+                    final user = await _authService.signInWithEmail(
+                      _signInEmailController.text,
+                      _signInPasswordController.text,
+                    );
+                    if (user != null) {
+                      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+                      if (!doc.exists || doc['name'] == null || doc['surname'] == null) {
+                        if (!mounted) return;
+                        Navigator.of(context).pushReplacementNamed('/profileCompletion');
+                      } else {
+                        if (!mounted) return;
+                        Navigator.of(context).pushReplacementNamed('/home');
+                      }
+                    } else {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Giriş başarısız!')),
+                      );
                     }
-                    Navigator.of(context).pushReplacementNamed('/home');
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
@@ -586,6 +602,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   ),
                   child: Text('Giriş Yap', style: buttonTextStyle),
                 ),
+                // --- SONU ---
                 const SizedBox(height: 12),
                 // Farklı bir hesapla giriş yap barı
                 GestureDetector(
@@ -621,7 +638,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       ),
     );
   }
-  // --- DEĞİŞİKLİK BİTTİ ---
 
   @override
   Widget build(BuildContext context) {
@@ -720,8 +736,21 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                               ],
                             ),
                             const SizedBox(height: 16),
+                            // --- Google ile giriş butonu DEĞİŞTİRİLDİ ---
                             ElevatedButton.icon(
-                              onPressed: () {},
+                              onPressed: () async {
+                                final user = await _authService.signInWithGoogle();
+                                if (user != null) {
+                                  final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+                                  if (!doc.exists || doc['name'] == null || doc['surname'] == null) {
+                                    if (!mounted) return;
+                                    Navigator.of(context).pushReplacementNamed('/profileCompletion');
+                                  } else {
+                                    if (!mounted) return;
+                                    Navigator.of(context).pushReplacementNamed('/home');
+                                  }
+                                }
+                              },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
                                 foregroundColor: Colors.black87,
@@ -734,6 +763,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                               icon: const Icon(Icons.g_mobiledata, size: 28),
                               label: const Text('Continue with Google'),
                             ),
+                            // --- Google ile giriş butonu SONU ---
                             const SizedBox(height: 16),
                             ElevatedButton.icon(
                               onPressed: () {
@@ -834,4 +864,5 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         ],
       ),
     );
-  }}
+  }
+}

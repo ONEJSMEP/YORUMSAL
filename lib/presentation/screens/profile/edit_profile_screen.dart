@@ -28,10 +28,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   bool _emailVerified = false;
   bool _phoneVerified = false;
   bool _notificationsEnabled = true;
-  String _selectedLanguage = 'Türkçe';
   XFile? _profileImage;
-
-  final List<String> _languages = ['Türkçe', 'English'];
   final List<String> _genders = ['Kadın', 'Erkek', 'Diğer'];
 
   @override

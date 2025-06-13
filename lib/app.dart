@@ -5,6 +5,8 @@ import 'core/constants.dart';
 import 'presentation/providers/auth_provider.dart';
 import 'presentation/screens/home/home_screen.dart';
 import 'presentation/screens/splash/splash_screen.dart';
+// EKLE: Profil tamamlama ekranı importu
+import 'presentation/screens/profile/profile_completion_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -27,16 +29,15 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: themeProvider.lightTheme,
           darkTheme: themeProvider.darkTheme,
-          themeMode:
-              themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
           home: homeWidget,
           routes: {
             '/home': (context) => const HomeScreen(),
             '/splash': (context) => const SplashScreen(),
-            // Diğer route'lar burada tanımlanabilir
+            '/profileCompletion': (context) => ProfileCompletionScreen(), // EKLENDİ
           },
-              );
-            },
-          );
-        }
-      }
+        );
+      },
+    );
+  }
+}

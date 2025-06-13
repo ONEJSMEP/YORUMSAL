@@ -18,9 +18,14 @@ dependencies:
   flutter_map: ^4.0.0
   latlong2: ^0.8.1
   intl: ^0.18.0
-  google_fonts: ^4.0.4  # <-- YENİ YAZI STİLLERİ İÇİN PACKAGE -->
+  google_fonts: ^4.0.4
   image_picker: ^1.1.2
-
+  # ...existing code...
+  firebase_core: ^2.30.0
+  firebase_auth: ^4.17.8
+  cloud_firestore: ^4.15.8
+  google_sign_in: ^6.2.1   # <-- EKLENDİ
+# ...existing code...
 
 dev_dependencies:
   flutter_test:
@@ -35,10 +40,12 @@ flutter:
     - assets/google_icon.png
     - assets/giris_ev.jpg
 
-
-
-
 flutter_icons:
   android: true
   ios: true
   image_path: "assets/logo.png"
+# ...existing code...
+  firebase_core: ^2.30.0     # <-- EKLENDİ
+  firebase_auth: ^4.17.8     # <-- EKLENDİ
+  cloud_firestore: ^4.15.8   # <-- EKLENDİ
+# ...existing code...

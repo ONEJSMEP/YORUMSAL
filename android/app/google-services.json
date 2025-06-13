@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "481359407375",
+    "project_id": "yorumsal-9be83",
+    "storage_bucket": "yorumsal-9be83.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:481359407375:android:07a3c1bb16b320143cf67a",
+        "android_client_info": {
+          "package_name": "com.example.flutter_yorum"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDviZaMBwG1SQmE-mVc_wceP5MT_yIPJ50"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

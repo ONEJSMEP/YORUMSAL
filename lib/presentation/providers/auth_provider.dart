@@ -1,31 +1,32 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' as supabase_auth; // Alias to avoid conflict
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../data/models/user_model.dart';
-import '../../data/repositories/auth_repository.dart';
 
 enum AuthStatus { unknown, authenticated, unauthenticated, loading }
 
 class AuthProvider extends ChangeNotifier {
-  final AuthRepository _authRepository;
+  final FirebaseAuth firebaseAuth;
   UserModel? _userProfile;
   AuthStatus _status = AuthStatus.unknown;
   String? _errorMessage;
 
-  AuthProvider(supabase_auth.SupabaseClient client) : _authRepository = AuthRepository(client) {
-    _authRepository.authStateChanges.listen(_onAuthStateChanged);
+  AuthProvider(this.firebaseAuth) {
     _checkInitialAuthStatus();
+    // Firebase'de authStateChanges ile otomatik dinleme yapılabilir.
+    firebaseAuth.authStateChanges().listen(_onAuthStateChanged);
   }
 
   UserModel? get userProfile => _userProfile;
-  supabase_auth.User? get currentUser => _authRepository.currentUser;
+  User? get currentUser => firebaseAuth.currentUser;
   AuthStatus get status => _status;
   String? get errorMessage => _errorMessage;
 
+  // İlk açılışta kullanıcı oturumu kontrolü
   Future<void> _checkInitialAuthStatus() async {
     _status = AuthStatus.loading;
     notifyListeners();
-    if (_authRepository.currentUser != null) {
-      await _loadUserProfile(_authRepository.currentUser!.id);
+    if (firebaseAuth.currentUser != null) {
+      await loadUserProfile();
       _status = AuthStatus.authenticated;
     } else {
       _status = AuthStatus.unauthenticated;
@@ -33,12 +34,12 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _onAuthStateChanged(supabase_auth.AuthState state) async {
+  // Firebase'de authState değişince otomatik tetiklenir
+  Future<void> _onAuthStateChanged(User? user) async {
     _status = AuthStatus.loading;
     notifyListeners();
-    final session = state.session;
-    if (session != null) {
-      await _loadUserProfile(session.user.id);
+    if (user != null) {
+      await loadUserProfile();
       _status = AuthStatus.authenticated;
     } else {
       _userProfile = null;
@@ -48,50 +49,63 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _loadUserProfile(String userId) async {
-    try {
-      _userProfile = await _authRepository.getCurrentUserProfile();
-    } catch (e) {
-      print("Error loading user profile in provider: $e");
-      _userProfile = null; // Ensure profile is null on error
+  // Kullanıcı profilini yükleme
+  Future<void> loadUserProfile() async {
+    if (firebaseAuth.currentUser != null) {
+      // İstersen Firestore'dan daha fazla profil bilgisi çekebilirsin.
+      _userProfile = UserModel(
+        id: firebaseAuth.currentUser!.uid,
+        email: firebaseAuth.currentUser!.email ?? '',
+        fullName: firebaseAuth.currentUser!.displayName,
+        avatarUrl: firebaseAuth.currentUser!.photoURL,
+        role: "user", // Şimdilik "user"
+        createdAt: DateTime.now(), // Şimdilik şimdi
+        updatedAt: null,
+      );
+    } else {
+      _userProfile = null;
     }
+    notifyListeners();
   }
 
   Future<bool> signUp(String email, String password, {String? fullName, required String userRole}) async {
-  _status = AuthStatus.loading;
-  _errorMessage = null;
-  notifyListeners();
-  try {
-    await _authRepository.signUp(
-      email,
-      password,
-      fullName: fullName,
-      userRole: userRole,
-    );
-    return true;
-  } on supabase_auth.AuthException catch (e) {
-    _errorMessage = e.message;
-    _status = AuthStatus.unauthenticated;
+    _status = AuthStatus.loading;
+    _errorMessage = null;
     notifyListeners();
-    return false;
-  } catch (e) {
-    _errorMessage = 'Beklenmedik bir hata oluştu: $e';
-    _status = AuthStatus.unauthenticated;
-    notifyListeners();
-    return false;
+    try {
+      await firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+      // FirebaseAuth'ta isim eklemek için updateDisplayName kullanabilirsin
+      if (fullName != null && firebaseAuth.currentUser != null) {
+        await firebaseAuth.currentUser!.updateDisplayName(fullName);
+      }
+      await loadUserProfile();
+      _status = AuthStatus.authenticated;
+      notifyListeners();
+      return true;
+    } on FirebaseAuthException catch (e) {
+      _errorMessage = e.message;
+      _status = AuthStatus.unauthenticated;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      _errorMessage = 'Beklenmedik bir hata oluştu: $e';
+      _status = AuthStatus.unauthenticated;
+      notifyListeners();
+      return false;
+    }
   }
-}
-
 
   Future<bool> signIn(String email, String password) async {
     _status = AuthStatus.loading;
     _errorMessage = null;
     notifyListeners();
     try {
-      await _authRepository.signIn(email, password);
-      // AuthStateChanges listener will handle setting status to authenticated
+      await firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+      await loadUserProfile();
+      _status = AuthStatus.authenticated;
+      notifyListeners();
       return true;
-    } on supabase_auth.AuthException catch (e) {
+    } on FirebaseAuthException catch (e) {
       _errorMessage = e.message;
       _status = AuthStatus.unauthenticated;
       notifyListeners();
@@ -108,29 +122,37 @@ class AuthProvider extends ChangeNotifier {
     _status = AuthStatus.loading;
     notifyListeners();
     try {
-      await _authRepository.signOut();
-      // AuthStateChanges listener will handle setting status to unauthenticated
+      await firebaseAuth.signOut();
+      _userProfile = null;
+      _status = AuthStatus.unauthenticated;
+      notifyListeners();
     } catch (e) {
       _errorMessage = 'Çıkış yaparken hata: $e';
-      // Durumu koru veya hata durumuna geçir
-      _status = AuthStatus.authenticated; // veya AuthStatus.error
+      _status = AuthStatus.authenticated;
       notifyListeners();
     }
   }
-  
+
   Future<void> updateUserProfile({String? fullName, String? avatarUrl}) async {
-    if (currentUser == null) return;
+    if (firebaseAuth.currentUser == null) return;
     _status = AuthStatus.loading;
     notifyListeners();
     try {
-      await _authRepository.updateUserProfile(fullName: fullName, avatarUrl: avatarUrl);
-      await _loadUserProfile(currentUser!.id); // Profili yeniden yükle
+      if (fullName != null) {
+        await firebaseAuth.currentUser!.updateDisplayName(fullName);
+      }
+      if (avatarUrl != null) {
+        await firebaseAuth.currentUser!.updatePhotoURL(avatarUrl);
+      }
+      await loadUserProfile();
       _status = AuthStatus.authenticated;
       notifyListeners();
     } catch (e) {
       _errorMessage = 'Profil güncellenirken hata: $e';
-      _status = AuthStatus.authenticated; // Hata olsa bile oturum açık kalabilir
+      _status = AuthStatus.authenticated;
       notifyListeners();
     }
   }
 }
+// AuthProvider, FirebaseAuth ile kullanıcı oturumlarını yönetir.
+// Kullanıcı kaydı, girişi, çıkışı ve profil güncelleme işlemlerini içerir.
